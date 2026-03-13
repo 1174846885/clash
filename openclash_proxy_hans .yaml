@@ -1,0 +1,156 @@
+# 新版OpenClash 通用链式代理配置模板（Smart 内核 优化版）
+# 作者：Hans（模板化版本）
+# 场景：Trojan 机场节点 + 住宅 SOCKS5 链式代理，防止 DNS/WebRTC 泄漏
+# 时间：2025-11-17 更新（Smart 内核最佳实践）
+
+# ──────────────── 基础设置 ────────────────
+port: 7890
+socks-port: 7891
+allow-lan: true
+mode: rule
+log-level: info
+external-controller: :9090
+dns:
+  enable: true
+  ipv6: false
+  listen: 0.0.0.0:53
+  respect-host-rules: true
+  use-hosts: true
+  enhanced-mode: fake-ip
+  fake-ip-filter:
+    - '*.lan'
+    - localhost.ptlogin2.qq.com
+    - '*.msftconnecttest.com'
+    - '*.msftncsi.com'
+    - 'stun.*.*'
+    - '*.stun.*'
+  default-nameserver:
+    - 119.29.29.29
+    - 223.5.5.5
+    - 114.114.114.114
+  nameserver:
+    - https://dns.cloudflare.com/dns-query
+    - https://dns.google/dns-query
+  nameserver-policy:
+    'geosite:cn':
+      - 119.29.29.29
+      - 223.5.5.5
+      - 114.114.114.114
+    'geosite:!cn':
+      - https://dns.cloudflare.com/dns-query
+      - https://dns.google/dns-query
+  fallback:
+    - https://doh.dns.sb/dns-query
+    - https://dns.cloudflare.com/dns-query
+    - https://dns.google/dns-query
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    geosite:
+      - gfw
+    ipcidr:
+      - 240.0.0.0/4
+    domain:
+      - "+.google.com"
+      - "+.facebook.com"
+      - "+.youtube.com"
+      - "+.x.com"
+      - "+.openai.com"
+      - "+.tiktok.com"
+      - "+.icloud.com"
+      - "+.apple.com"
+      - "+.cloudflare.com"
+      - "+.amazonaws.com"
+      - "+.doubleclick.net"
+      - "+.ghproxy.com"
+  default-nameserver-policy: false
+# ──────────────── 节点配置(必改) ────────────────
+proxies:
+  # === 机场 Trojan 节点（【必改】替换为真实信息）===
+  - {name: A01, server: 1.2.3.4, port: 443, type: trojan, password: pass123, sni: example.com, skip-cert-verify: false, network: ws, ws-opts: {path: /demo_path, headers: {Host: example.com}}}
+  - {name: B01, server: 2.3.4.5, port: 443, type: trojan, password: pass456, sni: example.org, skip-cert-verify: false, network: ws, ws-opts: {path: /demo_path2, headers: {Host: example.org}}}
+  # - {name: C01, server: , port: 443, type: trojan, password: , sni: , skip-cert-verify: false, network: ws, ws-opts: {path: , headers: {Host: }}}   # 【可选】更多节点
+
+# === 链式住宅 SOCKS5 出口（【必改】替换真实凭据）===
+  - name: 链式代理-住宅A
+    type: socks5
+    server: 5.6.7.8            # 【必改】住宅A 代理地址
+    port: 10000                # 【必改】端口号
+    username: user123          # 【必改】用户名
+    password: pass123          # 【必改】密码
+    udp: true
+    dialer-proxy: 住宅A-中继组   # 指定前置中继组
+
+# - name: 链式代理-住宅B   # 【默认禁用】启用请去掉#
+  # type: socks5
+  # server: 6.7.8.9          # 【必改】住宅B 地址
+  # port: 11000              # 【必改】端口号
+  # username: user456        # 【必改】用户名
+  # password: pass456        # 【必改】密码
+  # udp: true
+  # dialer-proxy: 住宅B-中继组
+
+# ──────────────── 策略组(必改) ────────────────
+proxy-groups:
+- name: 自动选择
+  type: url-test
+  url: https://cp.cloudflare.com/generate_204
+  interval: 600
+  tolerance: 2
+  proxies:
+  - A01
+  - B01
+  - C01
+
+  # ======= 住宅IP-机场节点选择 =======
+- name: 住宅A-中继组
+  type: select
+  proxies:
+  - 自动选择
+  - A01
+  - B01
+  - C01
+
+# - name: 住宅B-中继组
+#   type: select
+#   proxies:
+#   - 自动选择
+#   - A01
+#   - B01
+#   - C01
+
+  # ======= 未设规则默认节点选择 =======
+- name: 节点选择
+  type: select
+  proxies:
+#   - 链式代理-住宅A
+#   - 链式代理-住宅B
+  - A01
+  - B01
+  - C01
+  - DIRECT
+# ──────────────── 分流规则(可选) ────────────────
+rules:
+- DOMAIN-SUFFIX,stun.l.google.com,REJECT
+- DOMAIN-KEYWORD,stun,REJECT
+- DOMAIN-KEYWORD,turn,REJECT
+- DOMAIN-KEYWORD,rtc,REJECT
+
+  # =======  一机一住宅（配合 DHCP 静态分配固定IP 使用） =======
+# - SRC-IP-CIDR,192.168.20.12/32,链式代理-住宅A
+# - SRC-IP-CIDR,192.168.30.12/32,链式代理-住宅B
+
+  # =======  一网段一住宅（配合多Wi-Fi不同网段 使用） =======
+# - SRC-IP-CIDR,192.168.110.0/24,链式代理-住宅A
+# - SRC-IP-CIDR,192.168.120.0/24,链式代理-住宅B
+
+- DOMAIN-SUFFIX,google.com,节点选择
+- DOMAIN-KEYWORD,facebook,节点选择
+- DOMAIN-SUFFIX,youtube.com,节点选择
+- DOMAIN-KEYWORD,tiktok,节点选择
+- DOMAIN-KEYWORD,openai,节点选择
+- DOMAIN-SUFFIX,icloud.com,节点选择
+- DOMAIN-SUFFIX,apple.com,节点选择
+- DOMAIN-KEYWORD,instagram,节点选择
+- GEOIP,CN,DIRECT
+- MATCH,节点选择
