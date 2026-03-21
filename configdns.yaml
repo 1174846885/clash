@@ -5,7 +5,7 @@
 # 机场订阅
 proxy-providers:
   Cokecloud:
-    url: "https://wmteqi.yau96.com/config?token=4e68a4391ddf4bf4be2f594946299ed3"
+    url: "地址"
     type: http
     interval: 86400
     health-check:
