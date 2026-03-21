@@ -1,0 +1,7 @@
+# Fingerprint Browser Rules
+
+DOMAIN-SUFFIX,adspower.net
+DOMAIN-SUFFIX,adspower.com
+DOMAIN-SUFFIX,morelogin.com
+
+DOMAIN,getip.yoxuba.com
