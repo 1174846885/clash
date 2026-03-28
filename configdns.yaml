@@ -5,7 +5,7 @@
 # 机场订阅
 proxy-providers:
   Cokecloud:
-    url: ""
+    url: "https://wmteqi.yau96.com/config?token=4e68a4391ddf4bf4be2f594946299ed3"
     type: http
     interval: 86400
     health-check:
@@ -15,7 +15,7 @@ proxy-providers:
     proxy: 直连
 
   mitce:
-    url: ""
+    url: "https://app.mitce.net/?sid=538584&token=srvxbceb"
     type: http
     interval: 86400
     health-check:
@@ -223,3 +223,21 @@ rule-providers:
   #  password: pass123          # 【必改】密码
   #  udp: true
   #  dialer-proxy: 住宅A-中继组   # 指定前置中继组
+
+#多入口多出口配置，根据端口号分配
+#listeners:
+#  - name: mixed-8000
+#    type: mixed
+#    address: 0.0.0.0
+#    port: 8000
+#    proxy: 🔯 香港故转
+#  - name: mixed-8001
+#    type: mixed
+#    address: 0.0.0.0
+#    port: 8001
+#    proxy: 🔯 日本故转
+#  - name: mixed-8002
+#    type: mixed
+#    address: 0.0.0.0
+#    port: 8002
+#    proxy: 🔯 狮城故转
