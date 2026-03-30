@@ -5,3 +5,7 @@ immortalwrt 主题 argon  分盘工具 diskman 代理工具 openclash
 
 vi /etc/config/network 修改ip地址 
 reboot 重启
+
+
+
+流量走向 traceroute -n 8.8.8.8
