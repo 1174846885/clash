@@ -1,0 +1,6 @@
+vm 下载地址 112-8-47-111.vmos.us,https://fc8.top/,https://github.com/201853910/VMwareWorkstation
+
+immortalwrt 下载地址 https://downloads.immortalwrt.org/
+
+vi /etc/config/network 修改ip地址 
+reboot 重启
