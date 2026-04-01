@@ -5,7 +5,7 @@
 # 机场订阅
 proxy-providers:
   Cokecloud:
-    url: "https://wmteqi.yau96.com/config?token=4e68a4391ddf4bf4be2f594946299ed3"
+    url: ""
     type: http
     interval: 86400
     health-check:
@@ -15,7 +15,7 @@ proxy-providers:
     proxy: 直连
 
   mitce:
-    url: "https://app.mitce.net/?sid=538584&token=srvxbceb"
+    url: ""
     type: http
     interval: 86400
     health-check:
@@ -100,6 +100,17 @@ dns:
     - https://8.8.8.8/dns-query#RULES&ecs=223.5.5.0/24
   fake-ip-filter:
     - "rule-set:fakeipfilter_domain"
+        # --- 手动补充微信关键域名，解决图片、视频发送问题 ---
+    - "+.qpic.cn"            # 微信图片、表情包 CDN（最核心）
+    - "+.gtimg.com"          # 腾讯静态资源 CDN
+    - "+.weixin.qq.com"      # 微信核心服务
+    - "+.wechat.com"         # 微信海外版服务
+    - "+.servicewechat.com"  # 微信小程序
+    - "+.tenpay.com"         # 微信支付
+    - "+.qq.com"             # 腾讯主域名（可选，为了稳定建议加上）
+    - "short.weixin.qq.com"  # 微信短连接（用于消息收发握手）
+    - "szshort.weixin.qq.com"
+    - "mars.weixin.qq.com"   # 微信网络探测（影响连接速度）
  
 # 出站策略，根据自己情况调整每个策略里分组排序，增删都可以，比如把美国自动放到第一个，比如删除香港故转，注意别漏掉表情逗号等。
 # 如果相应分组没有筛选到对应的国家，请根据自己节点名字调整筛选关键字。
