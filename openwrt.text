@@ -1,0 +1,3 @@
+1。分盘工具 diskman
+2。取消挂在点
+3.拷贝文件命令 cp -r /overlay/* /mnt/sda3 
