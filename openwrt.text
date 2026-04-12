@@ -1,3 +1,22 @@
 1。分盘工具 diskman
 2。取消挂在点
 3.拷贝文件命令 cp -r /overlay/* /mnt/sda3 
+
+
+# Clash / Mihomo 网关示例
+curl -fsSL https://raw.githubusercontent.com/foru17/neko-master/main/apps/agent/install.sh \
+  | env NEKO_SERVER='http://your-panel:3000' \
+        NEKO_BACKEND_ID='1' \
+        NEKO_BACKEND_TOKEN='ag_xxx' \
+        NEKO_GATEWAY_TYPE='clash' \
+        NEKO_GATEWAY_URL='http://127.0.0.1:9090' \
+        sh
+
+# Surge 网关示例
+curl -fsSL https://raw.githubusercontent.com/foru17/neko-master/main/apps/agent/install.sh \
+  | env NEKO_SERVER='http://your-panel:3000' \
+        NEKO_BACKEND_ID='2' \
+        NEKO_BACKEND_TOKEN='ag_yyy' \
+        NEKO_GATEWAY_TYPE='surge' \
+        NEKO_GATEWAY_URL='http://127.0.0.1:9091' \
+        sh
