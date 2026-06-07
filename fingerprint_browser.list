@@ -1,6 +1,4 @@
 # Fingerprint Browser Rules
-PROCESS-NAME,WeChat
-DOMAIN-SUFFIX,qq.com
 DOMAIN-SUFFIX,adspower.net
 DOMAIN-SUFFIX,adspower.com
 DOMAIN-SUFFIX,morelogin.com
